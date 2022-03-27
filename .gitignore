@@ -1,0 +1,21 @@
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+!.yarn/cache
+#.pnp.*
+/test-ledger/
+/.pnp.loader.mjs
+/.pnp.cjs
+/.yarn/
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/prettier.xml
+/bin/app.js
+/.idea/vcs.xml
+/.idea/token-create-swap.iml
