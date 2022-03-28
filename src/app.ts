@@ -24,6 +24,15 @@ const CURRENT_TOKEN_SWAP_PROGRAM_ID =
     // new PublicKey('HUhawEZRhp1yHmSYTXKAPjMiyV8QFWHz9NL44X1XP6rk');
     TOKEN_SWAP_PROGRAM_ID;
 
+const TRADING_FEE_NUMERATOR = 25;
+const TRADING_FEE_DENOMINATOR = 10000;
+const OWNER_TRADING_FEE_NUMERATOR = 5;
+const OWNER_TRADING_FEE_DENOMINATOR = 10000;
+const OWNER_WITHDRAW_FEE_NUMERATOR =  1;
+const OWNER_WITHDRAW_FEE_DENOMINATOR =  6;
+const HOST_FEE_NUMERATOR = 20;
+const HOST_FEE_DENOMINATOR = 100;
+
 const connection: Connection = new Connection(
     clusterApiUrl('devnet'),
 // "http://localhost:8899",
@@ -149,14 +158,14 @@ const main = async () => {
         CURRENT_TOKEN_SWAP_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
         nonce,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        TRADING_FEE_NUMERATOR,
+        TRADING_FEE_DENOMINATOR,
+        OWNER_TRADING_FEE_NUMERATOR,
+        OWNER_TRADING_FEE_DENOMINATOR,
+        OWNER_WITHDRAW_FEE_NUMERATOR,
+        OWNER_WITHDRAW_FEE_DENOMINATOR,
+        HOST_FEE_NUMERATOR,
+        HOST_FEE_DENOMINATOR,
         CurveType.ConstantPrice,
     )
 }
