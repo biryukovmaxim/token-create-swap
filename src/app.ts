@@ -7,7 +7,7 @@ import {
     createMint,
     getAccount,
     getMint,
-    getOrCreateAssociatedTokenAccount,
+    getOrCreateAssociatedTokenAccount, Mint,
     mintTo, TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 
@@ -96,17 +96,22 @@ const main = async () => {
     );
 
     console.log("generating tokenA Data Acc for swap program")
-    const tokenAAccount: Account = await getOrCreateAssociatedTokenAccount(connection, owner, mintA, swapAuthority, true)
+    const tokenAAccount: Account = await getOrCreateAssociatedTokenAccount(connection,
+        owner,
+        mintA,
+        swapAuthority,
+        true)
     console.log("generating tokenB Data Acc for swap program")
     const tokenBAccount: Account = await getOrCreateAssociatedTokenAccount(connection, owner, mintB, swapAuthority, true)
     console.log("create pool token mint")
-    const poolTokenMint: PublicKey = await createMint(
+    const poolTokenMintPK: PublicKey = await createMint(
         connection,
         owner,
         swapAuthority,
         null,
         9 // We are using 9 to match the CLI decimal default exactly
     );
+    const poolTokenMint: Mint = await getMint(connection, poolTokenMintPK)
 
     await mintTo(connection, owner, mintA, tokenAAccount.address, owner, 200)
     await mintTo(connection, owner, mintB, tokenBAccount.address, owner, 400)
@@ -114,15 +119,20 @@ const main = async () => {
     console.log("create pool token data account")
     const tokenPoolAccount: Account = await getOrCreateAssociatedTokenAccount(connection,
         owner,
-        poolTokenMint,
+        poolTokenMintPK,
         owner.publicKey,
         true)
     console.log("create fee token data account")
     const tokenFeeAccount: Account = await getOrCreateAssociatedTokenAccount(connection,
         owner,
-        poolTokenMint,
+        poolTokenMintPK,
         owner.publicKey,
     )
+    console.log(`swap authority ${swapAuthority}`)
+    console.log(`token a owner ${tokenAAccount.owner}; is swap auth: ${swapAuthority.equals(tokenAAccount.owner)}`)
+    console.log(`token b owner ${tokenBAccount.owner}; is swap auth: ${swapAuthority.equals(tokenBAccount.owner)}`)
+    console.log(`pool token mint authority ${poolTokenMint.mintAuthority}; is swap auth ${swapAuthority.equals(poolTokenMint.mintAuthority as PublicKey)}`)
+
 
     console.log("create token swap")
     const tokenSwap: TokenSwap = await TokenSwap.createTokenSwap(connection,
@@ -131,7 +141,7 @@ const main = async () => {
         swapAuthority,
         tokenAAccount.address,
         tokenBAccount.address,
-        poolTokenMint,
+        poolTokenMintPK,
         mintA,
         mintB,
         tokenFeeAccount.address,
