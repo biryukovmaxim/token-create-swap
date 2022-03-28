@@ -28,8 +28,8 @@ const TRADING_FEE_NUMERATOR = 25;
 const TRADING_FEE_DENOMINATOR = 10000;
 const OWNER_TRADING_FEE_NUMERATOR = 5;
 const OWNER_TRADING_FEE_DENOMINATOR = 10000;
-const OWNER_WITHDRAW_FEE_NUMERATOR =  1;
-const OWNER_WITHDRAW_FEE_DENOMINATOR =  6;
+const OWNER_WITHDRAW_FEE_NUMERATOR =  0;
+const OWNER_WITHDRAW_FEE_DENOMINATOR =  0;
 const HOST_FEE_NUMERATOR = 20;
 const HOST_FEE_DENOMINATOR = 100;
 
@@ -73,7 +73,7 @@ const main = async () => {
             owner,
             owner.publicKey,
             null,
-            9 // We are using 9 to match the CLI decimal default exactly
+            2
         );
         fs.writeFileSync(`tokenAMint`, mintA.toBase58(), {encoding: "utf-8"})
     }
@@ -90,7 +90,7 @@ const main = async () => {
             owner,
             owner.publicKey,
             null,
-            9 // We are using 9 to match the CLI decimal default exactly
+            2
         );
         fs.writeFileSync(`tokenBMint`, mintB.toBase58(), {encoding: "utf-8"})
     }
@@ -118,12 +118,12 @@ const main = async () => {
         owner,
         swapAuthority,
         null,
-        9 // We are using 9 to match the CLI decimal default exactly
+        0
     );
     const poolTokenMint: Mint = await getMint(connection, poolTokenMintPK)
 
-    await mintTo(connection, owner, mintA, tokenAAccount.address, owner, 200)
-    await mintTo(connection, owner, mintB, tokenBAccount.address, owner, 400)
+    await mintTo(connection, owner, mintA, tokenAAccount.address, owner, 1000000)
+    await mintTo(connection, owner, mintB, tokenBAccount.address, owner, 1000000)
 
     console.log("create pool token data account")
     const tokenPoolAccount: Account = await getOrCreateAssociatedTokenAccount(connection,
@@ -135,7 +135,8 @@ const main = async () => {
     const tokenFeeAccount: Account = await getOrCreateAssociatedTokenAccount(connection,
         owner,
         poolTokenMintPK,
-        owner.publicKey,
+        // owner.publicKey,
+        new PublicKey('HfoTxFR1Tm6kGmWgYWD6J7YHVy1UwqSULUGVLXkJqaKN'),
     )
     console.log(`swap authority ${swapAuthority}`)
     console.log(`token a owner ${tokenAAccount.owner}; is swap auth: ${swapAuthority.equals(tokenAAccount.owner)}`)
@@ -166,7 +167,7 @@ const main = async () => {
         OWNER_WITHDRAW_FEE_DENOMINATOR,
         HOST_FEE_NUMERATOR,
         HOST_FEE_DENOMINATOR,
-        CurveType.ConstantPrice,
+        CurveType.ConstantProduct,
     )
 }
 
